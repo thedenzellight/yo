@@ -17,9 +17,6 @@ void print_help();
 void print_version();
 void noargs(char* n) {std::cout << n << ": no arguments specified. (use -h for help)";}
 
-std::string remove_q( std::string s ) {
-    return s.substr(1,s.length()-2);
-} 
 std::string s_getenv(std::string const& key)
 {
     char const* val = getenv(key.c_str()); 
