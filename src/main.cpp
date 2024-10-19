@@ -53,7 +53,7 @@ void search( std::string package_name ) {
         if ( cur_result >= MAX_RESULTS ) {
 								break;
 				}
-				std::cout << itr["Name"].asString() << " " << itr["Version"].asString() << "\n";
+				std::cout << itr["Name"].asString() << " v" << itr["Version"].asString() << "\n";
         std::cout << itr["Description"].asString() << "\n\n";
 				cur_result++;
     }
