@@ -84,7 +84,8 @@ void print_help() {
     "   yo {-v --version}\n" <<
     "   yo {install -S}\n" <<
     "   yo {remove  -R}\n" <<
-    "   yo {search  -Ss}\n";
+    "   yo {search  -Ss}\n" <<
+    "   yo {fetch -F}\n";
 }
 
 
