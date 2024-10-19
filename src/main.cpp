@@ -12,7 +12,7 @@ void fetchpkg( std::string package_name );
 bool check_exists( std::string package_name );
 void download_package( std::string package_name );
 void delete_package( std::string package_name );
-void search( std::string package_name );
+void search( std::string package_name, int num);
 void print_help();
 void print_version();
 std::string remove_q( std::string s ) {
@@ -26,13 +26,19 @@ std::string s_getenv(std::string const& key)
 
 int main( int argc, char** argv ) {
     if ( argc < 2 ) {
-        std::cout << argv[0] << ": no operation specified. -h for help\n";
+        std::cout << argv[0] << ": no operation specified. (use -h for help)\n";
         return 1;
     }
     if ( strcmp( argv[1], "fetch" ) == 0 || strcmp( argv[1], "-F") == 0) { fetchpkg( argv[2] ); } 
     else if ( strcmp( argv[1], "install" ) == 0 || strcmp( argv[1], "-S") == 0 ) { download_package( argv[2] ); }
     else if ( strcmp( argv[1], "remove" ) == 0 || strcmp( argv[1], "-R") == 0 ) { delete_package( argv[2] ); }
-    else if ( strcmp( argv[1], "search" ) == 0 || strcmp( argv[1], "-Ss") == 0 ) { search( argv[2] ); }
+    else if ( strcmp( argv[1], "search" ) == 0 || strcmp( argv[1], "-Ss") == 0 ) { 
+        if (argc <= 3) {
+            search( argv[2], 5 );
+        } else {
+            search( argv[2], std::stoi(argv[3]));
+        }
+        }
     else if ( strcmp( argv[1], "-h" ) == 0 || strcmp( argv[1], "--help") == 0 ) { print_help(); }
     else if ( strcmp( argv[1], "-v" ) == 0 || strcmp( argv[1], "--version" ) == 0 ) { print_version(); }
     else { std::cout << "invalid option '" << argv[1] << "'\n"; return 1;}
@@ -40,8 +46,8 @@ int main( int argc, char** argv ) {
 	return 0;
 }
 
-void search( std::string package_name ) {
-    const int MAX_RESULTS = 5;
+void search( std::string package_name, int num ) {
+    const int MAX_RESULTS = num;
     const std::string API_URL = "https://aur.archlinux.org/rpc/v5/search/";
     const cpr::Response REQ_RESPONSE = cpr::Get(cpr::Url{API_URL+package_name+"?by=name-desc"});
     Json::Value json_results;
@@ -84,7 +90,7 @@ void print_help() {
     "   yo {-v --version}\n" <<
     "   yo {install -S}\n" <<
     "   yo {remove  -R}\n" <<
-    "   yo {search  -Ss}\n" <<
+    "   yo {search  -Ss} ... {num of results}\n" <<
     "   yo {fetch -F}\n";
 }
 
