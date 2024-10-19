@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <format>
 #include <algorithm>
-#define VERSION "1.0.0"
+#define VERSION "1.1.5"
 
 
 void fetchpkg( std::string package_name );
@@ -50,7 +50,7 @@ void search( std::string package_name ) {
     std::cout << "found " << json_results["resultcount"] << " packages.\n\n";
     unsigned int cur_result = 1;
     for (auto itr : json_results["results"]) {
-        if ( cur_result >= MAX_RESULTS ) {
+        if ( cur_result >= MAX_RESULTS+1 ) {
 								break;
 				}
 				std::cout << itr["Name"].asString() << " v" << itr["Version"].asString() << "\n";
