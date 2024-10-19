@@ -15,6 +15,8 @@ void delete_package( std::string package_name );
 void search( std::string package_name, int num);
 void print_help();
 void print_version();
+void noargs(char* n) {std::cout << n << ": no arguments specified. (use -h for help)";}
+
 std::string remove_q( std::string s ) {
     return s.substr(1,s.length()-2);
 } 
@@ -29,16 +31,10 @@ int main( int argc, char** argv ) {
         std::cout << argv[0] << ": no operation specified. (use -h for help)\n";
         return 1;
     }
-    if ( strcmp( argv[1], "fetch" ) == 0 || strcmp( argv[1], "-F") == 0) { fetchpkg( argv[2] ); } 
-    else if ( strcmp( argv[1], "install" ) == 0 || strcmp( argv[1], "-S") == 0 ) { download_package( argv[2] ); }
-    else if ( strcmp( argv[1], "remove" ) == 0 || strcmp( argv[1], "-R") == 0 ) { delete_package( argv[2] ); }
-    else if ( strcmp( argv[1], "search" ) == 0 || strcmp( argv[1], "-Ss") == 0 ) { 
-        if (argc <= 3) {
-            search( argv[2], 5 );
-        } else {
-            search( argv[2], std::stoi(argv[3]));
-        }
-        }
+    if ( strcmp( argv[1], "fetch" ) == 0 || strcmp( argv[1], "-F") == 0) { if (argc <= 2) {fetchpkg( argv[2] );} else {noargs(argv[0]);} } 
+    else if ( strcmp( argv[1], "install" ) == 0 || strcmp( argv[1], "-S") == 0 ) { if (argc <= 2) {download_package( argv[2] ); } else {noargs(argv[0]);}}
+    else if ( strcmp( argv[1], "remove" ) == 0 || strcmp( argv[1], "-R") == 0 ) { if (argc <= 2) {delete_package( argv[2] );} else {noargs(argv[0]);} }
+    else if ( strcmp( argv[1], "search" ) == 0 || strcmp( argv[1], "-Ss") == 0 ) { if (argc <= 2) {noargs(argv[0]);}if (argc <= 3) {    search( argv[2], 5 );} else {    search( argv[2], std::stoi(argv[3]));}}
     else if ( strcmp( argv[1], "-h" ) == 0 || strcmp( argv[1], "--help") == 0 ) { print_help(); }
     else if ( strcmp( argv[1], "-v" ) == 0 || strcmp( argv[1], "--version" ) == 0 ) { print_version(); }
     else { std::cout << "invalid option '" << argv[1] << "'\n"; return 1;}
