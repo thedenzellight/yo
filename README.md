@@ -6,11 +6,12 @@ To install yo, you must build it from source.
 You can do that by cloning the repository and use the autoinstall script
 ```sh
 git clone https://github.com/thedenzellight/yo.git
+cd yo
 ./autoinstall
 ```
 If you want to do it with one command, you can do it like this:
 ```sh
-git clone https://github.com/thedenzellight/yo.git && ./autoinstall
+git clone https://github.com/thedenzellight/yo.git && cd yo && ./autoinstall
 ```
 # Usage
 |Command|Description|
