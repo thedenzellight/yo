@@ -13,8 +13,9 @@ If you want to do it with one command, you can do it like this:
 git clone https://github.com/thedenzellight/yo.git && ./autoinstall
 ```
 # Usage
-| yo (-S \| install) | Install a package |
+|Command|Description|
 |-------------------|-------------------|
+| yo (-S \| install) | Install a package |
 | yo (-R \| remove)  | Remove a package  |
 | yo (-F \| fetch)   | Download a package|
 | yo (-Ss \| search) | Search for packages|
