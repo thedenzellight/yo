@@ -41,15 +41,21 @@ int main( int argc, char** argv ) {
 }
 
 void search( std::string package_name ) {
+    const int MAX_RESULTS = 5
     const std::string API_URL = "https://aur.archlinux.org/rpc/v5/search/";
     const cpr::Response REQ_RESPONSE = cpr::Get(cpr::Url{API_URL+package_name+"?by=name-desc"});
     Json::Value json_results;
     Json::Reader reader;
     reader.parse(REQ_RESPONSE.text, json_results);
     std::cout << "found " << json_results["resultcount"] << " packages.\n\n";
+    unsigned int cur_result = 1;
     for (auto itr : json_results["results"]) {
-        std::cout << itr["Name"].asString() << " " << itr["Version"].asString() << "\n";
+        if ( cur_result <= MAX_RESULTS ) {
+								break;
+				}
+				std::cout << itr["Name"].asString() << " " << itr["Version"].asString() << "\n";
         std::cout << itr["Description"].asString() << "\n\n";
+				cur_result++;
     }
 }
 
