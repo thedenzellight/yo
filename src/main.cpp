@@ -29,25 +29,25 @@ int main( int argc, char** argv ) {
        return 1;
     }
     if ( strcmp( argv[1], "fetch" ) == 0 || strcmp( argv[1], "-F") == 0) { 
-        if (argc >= 3) {
+        if (argc < 3) {
             fetchpkg( argv, argc );
         } else {
             noargs(argv[0]);
         } } 
     else if ( strcmp( argv[1], "install" ) == 0 || strcmp( argv[1], "-S") == 0 ) {
-         if (argc >= 3) {
+         if (argc < 3) {
             download_package( argv, argc ); 
         } else {
             noargs(argv[0]);
         }}
     else if ( strcmp( argv[1], "remove" ) == 0 || strcmp( argv[1], "-R") == 0 ) { 
-        if (argc >= 3) {
+        if (argc < 3) {
             delete_package( argv, argc );
         } else {
             noargs(argv[0]);
         } }
     else if ( strcmp( argv[1], "search" ) == 0 || strcmp( argv[1], "-Ss") == 0 ) {
-        if (argc >= 3) {
+        if (argc < 3) {
             noargs(argv[0]);}
         if (argc == 3) {
             search( argv[2], 5 );
