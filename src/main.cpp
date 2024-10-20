@@ -5,13 +5,13 @@
 #include <filesystem>
 #include <format>
 #include <algorithm>
-#define VERSION "1.1.5"
+#define VERSION "1.2"
 
 
-void fetchpkg( std::string package_name );
+void fetchpkg( char** argv, int argc );
 bool check_exists( std::string package_name );
-void download_package( std::string package_name );
-void delete_package( std::string package_name );
+void download_package(char** argv, int argc );
+void delete_package( char** argv, int argc );
 void search( std::string package_name, int num);
 void print_help();
 void print_version();
@@ -24,14 +24,36 @@ std::string s_getenv(std::string const& key)
 }
 
 int main( int argc, char** argv ) {
-    if ( argc < 2 ) {
-        std::cout << argv[0] << ": no operation specified. (use -h for help)\n";
-        return 1;
+    if ( argc == 1 ) {
+       std::cout << argv[0] << ": no operation specified. (use -h for help)\n";
+       return 1;
     }
-    if ( strcmp( argv[1], "fetch" ) == 0 || strcmp( argv[1], "-F") == 0) { if (argc <= 2) {fetchpkg( argv[2] );} else {noargs(argv[0]);} } 
-    else if ( strcmp( argv[1], "install" ) == 0 || strcmp( argv[1], "-S") == 0 ) { if (argc <= 2) {download_package( argv[2] ); } else {noargs(argv[0]);}}
-    else if ( strcmp( argv[1], "remove" ) == 0 || strcmp( argv[1], "-R") == 0 ) { if (argc <= 2) {delete_package( argv[2] );} else {noargs(argv[0]);} }
-    else if ( strcmp( argv[1], "search" ) == 0 || strcmp( argv[1], "-Ss") == 0 ) { if (argc <= 2) {noargs(argv[0]);}if (argc <= 3) {    search( argv[2], 5 );} else {    search( argv[2], std::stoi(argv[3]));}}
+    if ( strcmp( argv[1], "fetch" ) == 0 || strcmp( argv[1], "-F") == 0) { 
+        if (argc >= 3) {
+            fetchpkg( argv, argc );
+        } else {
+            noargs(argv[0]);
+        } } 
+    else if ( strcmp( argv[1], "install" ) == 0 || strcmp( argv[1], "-S") == 0 ) {
+         if (argc >= 3) {
+            download_package( argv, argc ); 
+        } else {
+            noargs(argv[0]);
+        }}
+    else if ( strcmp( argv[1], "remove" ) == 0 || strcmp( argv[1], "-R") == 0 ) { 
+        if (argc >= 3) {
+            delete_package( argv, argc );
+        } else {
+            noargs(argv[0]);
+        } }
+    else if ( strcmp( argv[1], "search" ) == 0 || strcmp( argv[1], "-Ss") == 0 ) {
+        if (argc >= 3) {
+            noargs(argv[0]);}
+        if (argc == 3) {
+            search( argv[2], 5 );
+        } else {
+            search( argv[2], std::stoi(argv[3]));
+        } }
     else if ( strcmp( argv[1], "-h" ) == 0 || strcmp( argv[1], "--help") == 0 ) { print_help(); }
     else if ( strcmp( argv[1], "-v" ) == 0 || strcmp( argv[1], "--version" ) == 0 ) { print_version(); }
     else { std::cout << "invalid option '" << argv[1] << "'\n"; return 1;}
@@ -50,21 +72,23 @@ void search( std::string package_name, int num ) {
     unsigned int cur_result = 1;
     for (auto itr : json_results["results"]) {
         if ( cur_result >= MAX_RESULTS+1 ) {
-								break;
-				}
-				std::cout << itr["Name"].asString() << " v" << itr["Version"].asString() << "\n";
+		break;
+	}
+	std::cout << itr["Name"].asString() << " v" << itr["Version"].asString() << "\n";
         std::cout << itr["Description"].asString() << "\n\n";
-				cur_result++;
+	cur_result++;
     }
 }
 
-void fetchpkg( std::string package_name ) {
-    if ( check_exists(package_name) == true ) {
-        const std::string clone_prompt = "git clone https://aur.archlinux.org/" + package_name + ".git";
-		system( clone_prompt.data() );        
-    } else {
-        std::cout << "the package " << package_name << " doesn't exist\n";
-    }
+void fetchpkg( char** argv, int argc ) {
+    for (int i=2; i<argc; i++) {
+        std::string package_name = argv[i];
+        if ( check_exists(package_name) == true ) {
+            const std::string clone_prompt = "git clone https://aur.archlinux.org/" + package_name + ".git";
+	    	system( clone_prompt.data() );        
+        } else {
+            std::cout << "the package " << package_name << " doesn't exist\n";
+    } }
 }
 
 void print_version() {
@@ -88,27 +112,35 @@ void print_help() {
 }
 
 
-void download_package( std::string package_name ) {
-    if ( check_exists(package_name) == true ) {
-        const std::string pkg_path = s_getenv( "HOME" ) + "/." + package_name;
-        std::filesystem::create_directory( pkg_path );
-        const std::string clone_prompt = "git clone https://aur.archlinux.org/" + package_name + ".git ~/." + package_name;
-		system( clone_prompt.data() );
-        const std::string makepkg_prompt = "cd " + pkg_path + " && makepkg -si";
-        system( makepkg_prompt.data() );
-        std::filesystem::remove_all( pkg_path );
-	} else {
-        std::cout << "the package " << package_name << " doesn't exist\n";
+void download_package(char** argv, int argc) {
+    for (int i=2; i<argc; i++) {
+        std::string package_name = argv[i];
+        if ( check_exists(package_name) == true ) {
+            std::cout << argv << "\n";
+
+            const std::string pkg_path = s_getenv( "HOME" ) + "/." + package_name;
+            std::filesystem::create_directory( pkg_path );
+            const std::string clone_prompt = "git clone https://aur.archlinux.org/" + package_name + ".git ~/." + package_name;
+		    system( clone_prompt.data() );
+            const std::string makepkg_prompt = "cd " + pkg_path + " && makepkg -si";
+            system( makepkg_prompt.data() );
+            std::filesystem::remove_all( pkg_path );
+	    } else {
+            std::cout << "the package " << package_name << " doesn't exist\n";
+        }
     }
+    
 }
 
-void delete_package ( std::string package_name ) {
-    if ( check_exists(package_name) == true ) {
-        const std::string pacman_prompt = "sudo pacman -R " + package_name;
-        system( pacman_prompt.data() );
-    } else {
-        std::cout << "the package " << package_name << " doesn't exist\n";
-    }
+void delete_package ( char** argv, int argc ) {
+    for (int i=2; i<argc; i++) {
+        std::string package_name = argv[i];
+        if ( check_exists(package_name) == true ) {
+            const std::string pacman_prompt = "sudo pacman -R " + package_name;
+            system( pacman_prompt.data() );
+        } else {
+            std::cout << "the package " << package_name << " doesn't exist\n";
+    }    }
 }
 
 bool check_exists( std::string package_name ) {
@@ -128,3 +160,4 @@ bool check_exists( std::string package_name ) {
     //}
     return result;
 }
+
