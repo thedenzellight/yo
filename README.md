@@ -7,11 +7,12 @@ You can do that by cloning the repository and use the autoinstall script
 ```sh
 git clone https://github.com/thedenzellight/yo.git
 cd yo
+chmod +x autoinstall
 ./autoinstall
 ```
 If you want to do it with one command, you can do it like this:
 ```sh
-git clone https://github.com/thedenzellight/yo.git && cd yo && ./autoinstall
+git clone https://github.com/thedenzellight/yo.git && cd yo && chmod +x autoinstall && ./autoinstall
 ```
 # Usage
 |Command|Description|
