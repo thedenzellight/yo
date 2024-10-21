@@ -1,5 +1,6 @@
-mkdir build && cd build
+mkdir -p build
+cd build
 cmake ..
 make
-echo Copying yo into the /usr/bin/ directory
-sudo cp yo /usr/bin/yo
+sudo install yo /usr/bin
+echo yo is installed :D
