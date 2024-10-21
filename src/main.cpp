@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <format>
 #include <algorithm>
-#define VERSION "1.2.1"
+#define VERSION "1.2.2"
 
 
 void fetchpkg( char** argv, int argc );
@@ -15,13 +15,8 @@ void delete_package( char** argv, int argc );
 void search( std::string package_name, int num);
 void print_help();
 void print_version();
-void noargs(char* n) {std::cout << n << ": no arguments specified. (use -h for help)";}
+void noargs(char* n) {std::cout << n << ": no arguments specified. (use -h for help)\n";}
 
-std::string s_getenv(std::string const& key)
-{
-    char const* val = getenv(key.c_str()); 
-    return val == NULL ? std::string() : std::string(val);
-}
 
 int main( int argc, char** argv ) {
     if ( argc == 1 ) {
@@ -29,25 +24,25 @@ int main( int argc, char** argv ) {
        return 1;
     }
     if ( strcmp( argv[1], "fetch" ) == 0 || strcmp( argv[1], "-F") == 0) { 
-        if (argc < 3) {
+        if (argc <= 3) {
             fetchpkg( argv, argc );
         } else {
             noargs(argv[0]);
         } } 
     else if ( strcmp( argv[1], "install" ) == 0 || strcmp( argv[1], "-S") == 0 ) {
-         if (argc < 3) {
+         if (argc <= 3) {
             download_package( argv, argc ); 
         } else {
             noargs(argv[0]);
         }}
     else if ( strcmp( argv[1], "remove" ) == 0 || strcmp( argv[1], "-R") == 0 ) { 
-        if (argc < 3) {
+        if (argc <= 3) {
             delete_package( argv, argc );
         } else {
             noargs(argv[0]);
         } }
     else if ( strcmp( argv[1], "search" ) == 0 || strcmp( argv[1], "-Ss") == 0 ) {
-        if (argc < 3) {
+        if (argc <= 3) {
             noargs(argv[0]);}
         if (argc == 3) {
             search( argv[2], 5 );
@@ -115,9 +110,8 @@ void download_package(char** argv, int argc) {
     for (int i=2; i<argc; i++) {
         std::string package_name = argv[i];
         if ( check_exists(package_name) == true ) {
-            std::cout << argv << "\n";
-
-            const std::string pkg_path = s_getenv( "HOME" ) + "/." + package_name;
+	    const std::string HOME_PATH(getenv("HOME"));
+            const std::string pkg_path =  HOME_PATH + "/." + package_name;
             std::filesystem::create_directory( pkg_path );
             const std::string clone_prompt = "git clone https://aur.archlinux.org/" + package_name + ".git ~/." + package_name;
 		    system( clone_prompt.data() );
