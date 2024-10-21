@@ -1,9 +1,16 @@
 cmake_minimum_required(VERSION 3.8)
 project(
 	yo
-	VERSION 1.2
+	VERSION 1.2.2
 	LANGUAGES CXX
 )
+
+
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
+
 
 add_executable(yo src/main.cpp)
 
@@ -17,6 +24,7 @@ pkg_check_modules(JSONCPP jsoncpp)
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
+
 
 
 target_link_libraries(yo PRIVATE cpr::cpr)
