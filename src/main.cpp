@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <format>
 #include <algorithm>
-#define VERSION "1.2"
+#define VERSION "1.2.1"
 
 
 void fetchpkg( char** argv, int argc );
@@ -61,21 +61,20 @@ int main( int argc, char** argv ) {
 	return 0;
 }
 
-void search( std::string package_name, int num ) {
-    const int MAX_RESULTS = num;
-    const std::string API_URL = "https://aur.archlinux.org/rpc/v5/search/";
-    const cpr::Response REQ_RESPONSE = cpr::Get(cpr::Url{API_URL+package_name+"?by=name-desc"});
+void search( std::string package_name, int MAX_RESULTS ) {
+    const std::string API_ENDPOINT = "https://aur.archlinux.org/rpc/v5/search/";
+    const cpr::Response REQ_RESPONSE = cpr::Get(cpr::Url{API_ENDPOINT+package_name+"?by=name-desc"});
     Json::Value json_results;
     Json::Reader reader;
     reader.parse(REQ_RESPONSE.text, json_results);
     std::cout << "found " << json_results["resultcount"] << " packages.\n\n";
     unsigned int cur_result = 1;
-    for (auto itr : json_results["results"]) {
+    for (auto iterable : json_results["results"]) {
         if ( cur_result >= MAX_RESULTS+1 ) {
 		break;
 	}
-	std::cout << itr["Name"].asString() << " v" << itr["Version"].asString() << "\n";
-        std::cout << itr["Description"].asString() << "\n\n";
+	std::cout << iterable["Name"].asString() << " v" << iterable["Version"].asString() << "\n";
+        std::cout << iterable["Description"].asString() << "\n\n";
 	cur_result++;
     }
 }
@@ -144,20 +143,13 @@ void delete_package ( char** argv, int argc ) {
 }
 
 bool check_exists( std::string package_name ) {
-    const std::string INFO_ENDPOINT_URL = "https://aur.archlinux.org/rpc/v5/info/";
-    const cpr::Response REQ_RESPONSE = cpr::Get(cpr::Url{INFO_ENDPOINT_URL+package_name});
+    const std::string API_ENDPOINT = "https://aur.archlinux.org/rpc/v5/info/";
+    const cpr::Response REQ_RESPONSE = cpr::Get(cpr::Url{API_ENDPOINT+package_name});
     Json::Value json_results;
 
     Json::Reader reader;
     reader.parse(REQ_RESPONSE.text, json_results);
-    const Json::Value results = json_results["resultcount"];
     
-    const bool result = results.asInt();
-    //if ( result == true ) {
-    //    std::cout << "Package " << package_name << " was found\n";
-    //} else {
-    //    std::cout << "Package " << package_name << " wasn't found.\n";
-    //}
-    return result;
+    return json_results["resultcount"].asInt();;
 }
 
