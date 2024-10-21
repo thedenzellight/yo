@@ -15,7 +15,7 @@ void delete_package( char** argv, int argc );
 void search( std::string package_name, int num);
 void print_help();
 void print_version();
-void noargs(char* n) {std::cout << n << ": no arguments specified. (use -h for help)\n";}
+void noargs( char* n ) { std::cout << n << ": no arguments specified. (use -h for help)\n"; }
 
 
 int main( int argc, char** argv ) {
@@ -24,27 +24,27 @@ int main( int argc, char** argv ) {
        return 1;
     }
     if ( strcmp( argv[1], "fetch" ) == 0 || strcmp( argv[1], "-F") == 0) { 
-        if (argc <= 3) {
+        if ( argc <= 3 ) {
             fetchpkg( argv, argc );
         } else {
-            noargs(argv[0]);
+            noargs( argv[0] );
         } } 
     else if ( strcmp( argv[1], "install" ) == 0 || strcmp( argv[1], "-S") == 0 ) {
-         if (argc <= 3) {
+         if ( argc <= 3 ) {
             download_package( argv, argc ); 
         } else {
-            noargs(argv[0]);
+            noargs( argv[0] );
         }}
     else if ( strcmp( argv[1], "remove" ) == 0 || strcmp( argv[1], "-R") == 0 ) { 
-        if (argc <= 3) {
+        if ( argc <= 3 ) {
             delete_package( argv, argc );
         } else {
-            noargs(argv[0]);
+            noargs( argv[0] );
         } }
     else if ( strcmp( argv[1], "search" ) == 0 || strcmp( argv[1], "-Ss") == 0 ) {
-        if (argc <= 3) {
-            noargs(argv[0]);}
-        if (argc == 3) {
+        if ( argc <= 3 ) {
+            noargs( argv[0]); }
+        if ( argc == 3 ) {
             search( argv[2], 5 );
         } else {
             search( argv[2], std::stoi(argv[3]));
@@ -58,7 +58,7 @@ int main( int argc, char** argv ) {
 
 void search( std::string package_name, int MAX_RESULTS ) {
     const std::string API_ENDPOINT = "https://aur.archlinux.org/rpc/v5/search/";
-    const cpr::Response REQ_RESPONSE = cpr::Get(cpr::Url{API_ENDPOINT+package_name+"?by=name-desc"});
+    const cpr::Response REQ_RESPONSE = cpr::Get( cpr::Url{ API_ENDPOINT+package_name+"?by=name-desc" } );
     Json::Value json_results;
     Json::Reader reader;
     reader.parse(REQ_RESPONSE.text, json_results);
@@ -75,19 +75,17 @@ void search( std::string package_name, int MAX_RESULTS ) {
 }
 
 void fetchpkg( char** argv, int argc ) {
-    for (int i=2; i<argc; i++) {
+    for ( int i=2; i<argc; i++ ) {
         std::string package_name = argv[i];
         if ( check_exists(package_name) == true ) {
             const std::string clone_prompt = "git clone https://aur.archlinux.org/" + package_name + ".git";
 	    	system( clone_prompt.data() );        
         } else {
-            std::cout << "the package " << package_name << " doesn't exist\n";
-    } }
+            std::cout << "the package " << package_name << " doesn't exist\n"; } }
 }
 
 void print_version() {
-    const std::string yo_version = VERSION;
-    std::cout <<  " _   _  ___    yo version " << yo_version << "\n" <<  
+    std::cout <<  " _   _  ___    yo version " << VERSION << "\n" <<  
                   "| | | |/ _ \\   copyright (C) 2024-2024 \n" <<
                   "| |_| | (_) | \n" <<
                   "\\__,  |\\___/ \n" << 
@@ -106,11 +104,11 @@ void print_help() {
 }
 
 
-void download_package(char** argv, int argc) {
-    for (int i=2; i<argc; i++) {
+void download_package( char** argv, int argc ) {
+    for ( int i=2; i<argc; i++ ) {
         std::string package_name = argv[i];
-        if ( check_exists(package_name) == true ) {
-	    const std::string HOME_PATH(getenv("HOME"));
+        if ( check_exists( package_name ) == true ) {
+	    const std::string HOME_PATH( getenv( "HOME" ) );
             const std::string pkg_path =  HOME_PATH + "/." + package_name;
             std::filesystem::create_directory( pkg_path );
             const std::string clone_prompt = "git clone https://aur.archlinux.org/" + package_name + ".git ~/." + package_name;
@@ -126,7 +124,7 @@ void download_package(char** argv, int argc) {
 }
 
 void delete_package ( char** argv, int argc ) {
-    for (int i=2; i<argc; i++) {
+    for ( int i=2; i<argc; i++ ) {
         std::string package_name = argv[i];
         if ( check_exists(package_name) == true ) {
             const std::string pacman_prompt = "sudo pacman -R " + package_name;
@@ -138,11 +136,11 @@ void delete_package ( char** argv, int argc ) {
 
 bool check_exists( std::string package_name ) {
     const std::string API_ENDPOINT = "https://aur.archlinux.org/rpc/v5/info/";
-    const cpr::Response REQ_RESPONSE = cpr::Get(cpr::Url{API_ENDPOINT+package_name});
+    const cpr::Response REQ_RESPONSE = cpr::Get( cpr::Url{ API_ENDPOINT+package_name } );
     Json::Value json_results;
 
     Json::Reader reader;
-    reader.parse(REQ_RESPONSE.text, json_results);
+    reader.parse( REQ_RESPONSE.text, json_results );
     
     return json_results["resultcount"].asInt();;
 }
